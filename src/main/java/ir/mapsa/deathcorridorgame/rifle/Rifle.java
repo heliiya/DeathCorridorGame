@@ -28,7 +28,7 @@ public abstract class Rifle {
             System.err.println(e.getMessage());
         }
         try{
-            bullet = Accuracy.getBullet(doc.getString("bullet"));
+            bullet = Bullet.getBullet(doc.getString("bullet"));
         }catch(NoSuchElementException e){
             System.err.println(e.getMessage());
         }

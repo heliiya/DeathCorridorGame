@@ -15,8 +15,4 @@ public enum Accuracy {
                 .filter(value -> value.name().equals(key)).findFirst().get();
     }
 
-    public static Bullet getBullet(String key) {
-        return Arrays.stream(Bullet.values())
-                .filter(value -> value.name().equals(key)).findFirst().get();
-    }
 }
