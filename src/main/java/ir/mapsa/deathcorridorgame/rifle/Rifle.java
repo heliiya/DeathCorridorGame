@@ -11,7 +11,7 @@ public abstract class Rifle {
     Accuracy accuracy;
     private Bullet bullet;
 
-    public Rifle(float targetHitRate, int injuryRate, Accuracy accuracy, Bullet bullet) {
+    public Rifle(double targetHitRate, int injuryRate, Accuracy accuracy, Bullet bullet) {
         this.targetHitRate = targetHitRate;
         this.injuryRate = injuryRate;
         this.accuracy = accuracy;

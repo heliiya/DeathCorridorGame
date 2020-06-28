@@ -35,9 +35,9 @@ public class Soldier {
     }
 
     public boolean beingShot(Soldier attackingSoldier) {
-        float random = 0.00f;
+        double random = 0.00f;
         try {
-            random = Helper.showRandomPercent(0.00f, 1.00f, new Random());
+            random = Helper.showRandomPercent(0.00, 1.00, new Random());
         }catch (IllegalArgumentException e){
             System.err.println("Can't calculate random about targetHitRate of shot soldier because: " + e.getMessage());
         }

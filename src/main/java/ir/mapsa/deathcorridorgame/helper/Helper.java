@@ -4,13 +4,13 @@ import java.util.Random;
 
 public class Helper {
 
-    public static float showRandomPercent(float start, float end, Random random) throws IllegalArgumentException{
+    public static double showRandomPercent(double start, double end, Random random) throws IllegalArgumentException{
         if (start > end) {
             throw new IllegalArgumentException("Start cannot exceed End.");
         }
-        double range = (double)end - (double)start + 1;
+        double range = end - start + 1;
         double fraction = range * random.nextDouble();
-        return (float)(fraction + start);
+        return fraction + start;
     }
 
 }
