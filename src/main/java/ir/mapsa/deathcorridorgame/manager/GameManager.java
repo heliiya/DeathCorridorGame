@@ -1,21 +1,18 @@
 package ir.mapsa.deathcorridorgame.manager;
 
 import ir.mapsa.deathcorridorgame.helper.RifleType;
+import ir.mapsa.deathcorridorgame.helper.TeamType;
 import ir.mapsa.deathcorridorgame.soldier.Soldier;
+import org.bson.Document;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class GameManager {
-    private static Queue<Soldier> teamA;
-    private static Queue<Soldier> teamB;
+    private static DatabaseManager databaseManager;
 
     public static void main(String[] args) {
+        databaseManager = DatabaseManager.getInstance();
         print("~~WELCOME TO DEATH CORRIDOR GAME~~");
-        teamA = new LinkedList<>();
-        teamB = new LinkedList<>();
 
         print("How many soldier do you want?");
         Scanner sc = new Scanner(System.in);
@@ -23,76 +20,66 @@ public class GameManager {
         populateTeams(soldierCount);
 
         while (true){
-            int sizeA = teamA.size();
-            int sizeB = teamB.size();
-            print("Team A has " + sizeA + " soldier, and team B has " + sizeB + " soldier.");
-            if(sizeA == 0 && sizeB == 0){
+            long blueTeamCounts = databaseManager.getSoldierCount(TeamType.BLUE);
+            long redTeamCounts = databaseManager.getSoldierCount(TeamType.RED);
+            print("Team BLUE has " + blueTeamCounts + " soldier, and team RED has " + redTeamCounts + " soldier.");
+            if(blueTeamCounts == 0 && redTeamCounts == 0){
                 print("Both team was equal.");
                 break;
             }
-            if(sizeA == 0){
-                print("Team B won.");
+            if(blueTeamCounts == 0){
+                print("Team RED won.");
                 break;
             }
-            if(sizeB == 0){
-                print("Team A won.");
+            if(redTeamCounts == 0){
+                print("Team BLUE won.");
                 break;
             }
-            game();
+            fight();
         }
     }
 
     private static void populateTeams(int soldierCount) {
+        Random random = new Random();
+        List<Document> soldiers = new ArrayList<>();
         for (int i=0; i<soldierCount; i++){
-            addToTeamA();
-            addToTeamB();
+            addSoldier(soldiers, random, TeamType.BLUE);
+            addSoldier(soldiers, random, TeamType.RED);
+        }
+        databaseManager.addSoldiers(soldiers);
+    }
+
+    private static void addSoldier(List<Document> soldiers, Random random, TeamType teamType) {
+        int rifleTypeId = random.nextInt(6);
+        RifleType rifleType = RifleType.getRifleType(rifleTypeId);
+        if(rifleType != null){
+            soldiers.add(new Soldier(rifleType.getRifle(), teamType).generateDocument());
         }
     }
 
-    private static void addToTeamB() {
-        Random random = new Random();
-        int randomRifleStateB = random.nextInt(6);
-        RifleType rifleTypeB = RifleType.getRifleState(randomRifleStateB);
-        if(rifleTypeB != null){
-            teamB.add(new Soldier(rifleTypeB.getRifle()));
-        }else {
-            addToTeamB();
-        }
-    }
+    private static void fight() {
+        Soldier blueSoldier = databaseManager.getFirstSoldier(TeamType.BLUE);
+        Soldier redSoldier = databaseManager.getFirstSoldier(TeamType.RED);
 
-    private static void addToTeamA() {
-        Random random = new Random();
-        int randomRifleStateA = random.nextInt(6);
-        RifleType rifleTypeA = RifleType.getRifleState(randomRifleStateA);
-        if(rifleTypeA != null){
-            teamA.add(new Soldier(rifleTypeA.getRifle()));
-        }else{
-            addToTeamA();
-        }
-    }
-
-    private static void game() {
-        Soldier soldierA = teamA.poll();
-        Soldier soldierB = teamB.poll();
         Random random = new Random();
         int firstShoot = random.nextInt(2);
         if(firstShoot == 1){
-            boolean isDeathA = soldierA.beingShot(soldierB);
+            boolean isDeathA = blueSoldier.beingShot(redSoldier);
             if(!isDeathA){
-                boolean isDeathB = soldierB.beingShot(soldierA);
+                boolean isDeathB = redSoldier.beingShot(blueSoldier);
                 if(!isDeathB){
-                    teamB.add(soldierB);
+                    databaseManager.addSoldier(redSoldier);
                 }
-                teamA.add(soldierA);
+                databaseManager.addSoldier(blueSoldier);
             }
         }else{
-            boolean isDeathB = soldierB.beingShot(soldierA);
+            boolean isDeathB = redSoldier.beingShot(blueSoldier);
             if(!isDeathB){
-                boolean isDeathA = soldierA.beingShot(soldierB);
+                boolean isDeathA = blueSoldier.beingShot(redSoldier);
                 if(!isDeathA){
-                    teamA.add(soldierA);
+                    databaseManager.addSoldier(blueSoldier);
                 }
-                teamB.add(soldierB);
+                databaseManager.addSoldier(redSoldier);
             }
         }
     }

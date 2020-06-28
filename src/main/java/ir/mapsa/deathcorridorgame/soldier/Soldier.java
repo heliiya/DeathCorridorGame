@@ -1,19 +1,33 @@
 package ir.mapsa.deathcorridorgame.soldier;
 
 import ir.mapsa.deathcorridorgame.helper.Helper;
+import ir.mapsa.deathcorridorgame.helper.TeamType;
 import ir.mapsa.deathcorridorgame.rifle.Rifle;
-import org.bson.types.ObjectId;
+import ir.mapsa.deathcorridorgame.rifle.SniperRifle;
+import org.bson.Document;
 
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 public class Soldier {
-    private ObjectId id;
     private long stamina;
     private Rifle rifle;
+    private TeamType teamType;
 
-    public Soldier(Rifle rifle) {
+    public Soldier(Rifle rifle, TeamType teamType) {
         this.rifle = rifle;
+        this.teamType = teamType;
         stamina = 100;
+    }
+
+    public Soldier(Document doc) {
+        rifle = new SniperRifle((Document) doc.get("rifle"));
+        try{
+            teamType = TeamType.getTeamType(doc.getString("teamType"));
+        }catch(NoSuchElementException e){
+            System.err.println(e.getMessage());
+        }
+        stamina = doc.getLong("stamina");
     }
 
     public Rifle getRifle() {
@@ -38,4 +52,13 @@ public class Soldier {
 
         return stamina <= 0;
     }
+
+    public Document generateDocument(){
+        Document document = new Document();
+        document.append("stamina", stamina);
+        document.append("rifle", rifle.generateDocument());
+        document.append("teamType", teamType.name());
+        return document;
+    }
+
 }

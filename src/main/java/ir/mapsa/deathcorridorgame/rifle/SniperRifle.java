@@ -1,6 +1,7 @@
 package ir.mapsa.deathcorridorgame.rifle;
 
 import ir.mapsa.deathcorridorgame.helper.Helper;
+import org.bson.Document;
 
 import java.util.Random;
 
@@ -11,6 +12,10 @@ public class SniperRifle extends Rifle{
         super(0.60f, 20, Accuracy.HIGH, bullet);
         this.isZoom = isZoom;
         checkZoom();
+    }
+
+    public SniperRifle(Document doc) {
+        super(doc);
     }
 
     private void checkZoom() {

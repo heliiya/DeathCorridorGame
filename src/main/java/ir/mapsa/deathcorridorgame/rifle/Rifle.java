@@ -1,7 +1,12 @@
 package ir.mapsa.deathcorridorgame.rifle;
 
+import ir.mapsa.deathcorridorgame.helper.TeamType;
+import org.bson.Document;
+
+import java.util.NoSuchElementException;
+
 public abstract class Rifle {
-    float targetHitRate;
+    double targetHitRate;
     int injuryRate;
     Accuracy accuracy;
     private Bullet bullet;
@@ -14,7 +19,22 @@ public abstract class Rifle {
         checkBullet();
     }
 
-    public float getTargetHitRate() {
+    public Rifle(Document doc) {
+        targetHitRate = doc.getDouble("targetHitRate");
+        injuryRate = doc.getInteger("injuryRate");
+        try{
+            accuracy = Accuracy.getAccuracy(doc.getString("accuracy"));
+        }catch(NoSuchElementException e){
+            System.err.println(e.getMessage());
+        }
+        try{
+            bullet = Accuracy.getBullet(doc.getString("bullet"));
+        }catch(NoSuchElementException e){
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public double getTargetHitRate() {
         return targetHitRate;
     }
 
@@ -23,15 +43,21 @@ public abstract class Rifle {
     }
 
     private void checkBullet(){
-        switch (bullet){
-            case LOW_CALIBER:
-                targetHitRate += 0.15f * targetHitRate;
-                break;
-            case HIGH_CALIBER:
-                targetHitRate -= 0.1f * targetHitRate;
-                injuryRate += 10;
-                break;
+        if(Bullet.LOW_CALIBER.name().equals(bullet)){
+            targetHitRate += 0.15f * targetHitRate;
+        }else if(Bullet.HIGH_CALIBER.name().equals(bullet)){
+            targetHitRate -= 0.1f * targetHitRate;
+            injuryRate += 10;
         }
+    }
+
+    public Document generateDocument(){
+        Document document = new Document();
+        document.append("targetHitRate", targetHitRate);
+        document.append("injuryRate", injuryRate);
+        document.append("accuracy", accuracy.name());
+        document.append("bullet", bullet.name());
+        return document;
     }
 
 }

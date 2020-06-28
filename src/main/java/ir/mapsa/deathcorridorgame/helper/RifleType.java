@@ -16,7 +16,7 @@ public enum RifleType {
         this.id = id;
     }
 
-    public static RifleType getRifleState(int id) {
+    public static RifleType getRifleType(int id) {
         for (RifleType value : RifleType.values())
             if(value.id == id)
                 return value;
