@@ -1,33 +1,25 @@
 package ir.mapsa.deathcorridorgame.manager;
 
-import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-
 import ir.mapsa.deathcorridorgame.helper.TeamType;
 import ir.mapsa.deathcorridorgame.soldier.Soldier;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
-import org.bson.types.ObjectId;
 
 import java.util.List;
 
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private MongoCollection<Document> soldierCollection;
+    private MongoCollection<Document> collection;
 
     private DatabaseManager(){
         MongoClient client = MongoClients.create("mongodb://localhost:27017");
         MongoDatabase database = client.getDatabase("DeathCorridorGame");
-        soldierCollection = database.getCollection("soldier");
+        collection = database.getCollection("soldier");
     }
 
     public static DatabaseManager getInstance(){
@@ -38,19 +30,19 @@ public class DatabaseManager {
     }
 
     public void addSoldiers(List<Document> soldiers){
-        soldierCollection.insertMany(soldiers);
+        collection.insertMany(soldiers);
     }
 
     public long getSoldierCount(TeamType teamType){
-        return soldierCollection.countDocuments(eq("teamType", teamType.name()));
+        return collection.countDocuments(eq("teamType", teamType.name()));
     }
 
     public Soldier getFirstSoldier(TeamType teamType){
-        return new Soldier(soldierCollection.findOneAndDelete(eq("teamType", teamType.name())));
+        return new Soldier(collection.findOneAndDelete(eq("teamType", teamType.name())));
     }
 
     public void addSoldier(Soldier soldier){
-        soldierCollection.insertOne(soldier.generateDocument());
+        collection.insertOne(soldier.generateDocument());
     }
 
 }
