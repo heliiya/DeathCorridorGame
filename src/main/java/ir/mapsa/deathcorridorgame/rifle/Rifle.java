@@ -10,6 +10,7 @@ public abstract class Rifle {
     int injuryRate;
     Accuracy accuracy;
     private Bullet bullet;
+    String type;
 
     public Rifle(double targetHitRate, int injuryRate, Accuracy accuracy, Bullet bullet) {
         this.targetHitRate = targetHitRate;
@@ -17,6 +18,7 @@ public abstract class Rifle {
         this.accuracy = accuracy;
         this.bullet = bullet;
         checkBullet();
+        this.type = this.getClass().getSimpleName();
     }
 
     public Rifle(Document doc) {
@@ -32,6 +34,7 @@ public abstract class Rifle {
         }catch(NoSuchElementException e){
             System.err.println(e.getMessage());
         }
+        type = doc.getString("type");
     }
 
     public double getTargetHitRate() {
@@ -57,6 +60,7 @@ public abstract class Rifle {
         document.append("injuryRate", injuryRate);
         document.append("accuracy", accuracy.name());
         document.append("bullet", bullet.name());
+        document.append("type", type);
         return document;
     }
 

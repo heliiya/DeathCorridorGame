@@ -37,7 +37,7 @@ public class DatabaseManager {
         return collection.countDocuments(eq("teamType", teamType.name()));
     }
 
-    public Soldier getFirstSoldier(TeamType teamType){
+    public Soldier findAndDeleteFirstSoldier(TeamType teamType){
         return new Soldier(collection.findOneAndDelete(eq("teamType", teamType.name())));
     }
 

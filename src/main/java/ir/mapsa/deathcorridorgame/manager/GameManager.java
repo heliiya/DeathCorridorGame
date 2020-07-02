@@ -58,8 +58,8 @@ public class GameManager {
     }
 
     private static void fight() {
-        Soldier blueSoldier = databaseManager.getFirstSoldier(TeamType.BLUE);
-        Soldier redSoldier = databaseManager.getFirstSoldier(TeamType.RED);
+        Soldier blueSoldier = databaseManager.findAndDeleteFirstSoldier(TeamType.BLUE);
+        Soldier redSoldier = databaseManager.findAndDeleteFirstSoldier(TeamType.RED);
 
         Random random = new Random();
         int firstShoot = random.nextInt(2);

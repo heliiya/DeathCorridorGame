@@ -2,6 +2,7 @@ package ir.mapsa.deathcorridorgame.soldier;
 
 import ir.mapsa.deathcorridorgame.helper.Helper;
 import ir.mapsa.deathcorridorgame.helper.TeamType;
+import ir.mapsa.deathcorridorgame.rifle.AssaultRifle;
 import ir.mapsa.deathcorridorgame.rifle.Rifle;
 import ir.mapsa.deathcorridorgame.rifle.SniperRifle;
 import org.bson.Document;
@@ -21,7 +22,13 @@ public class Soldier {
     }
 
     public Soldier(Document doc) {
-        rifle = new SniperRifle((Document) doc.get("rifle"));
+        Document rifleDoc = (Document) doc.get("rifle");
+        String rifleType = rifleDoc.getString("type");
+        if(SniperRifle.class.getSimpleName().equals(rifleType)){
+            rifle = new SniperRifle(rifleDoc);
+        }else if(AssaultRifle.class.getSimpleName().equals(rifleType)){
+            rifle = new AssaultRifle(rifleDoc);
+        }
         try{
             teamType = TeamType.getTeamType(doc.getString("teamType"));
         }catch(NoSuchElementException e){

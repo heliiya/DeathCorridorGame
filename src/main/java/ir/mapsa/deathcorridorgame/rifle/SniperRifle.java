@@ -10,12 +10,14 @@ public class SniperRifle extends Rifle{
 
     public SniperRifle(Bullet bullet, boolean isZoom) {
         super(0.60, 20, Accuracy.HIGH, bullet);
+        this.type = this.getClass().getSimpleName();
         this.isZoom = isZoom;
         checkZoom();
     }
 
     public SniperRifle(Document doc) {
         super(doc);
+        isZoom = doc.getBoolean("isZoom");
     }
 
     private void checkZoom() {
@@ -28,6 +30,13 @@ public class SniperRifle extends Rifle{
             }
             targetHitRate += random * targetHitRate;
         }
+    }
+
+    @Override
+    public Document generateDocument(){
+        Document doc = super.generateDocument();
+        doc.append("isZoom", isZoom);
+        return doc;
     }
 
 }
